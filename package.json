@@ -1,0 +1,20 @@
+{
+  "name": "messire-paulochon",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Messire Paulochon — jeu de plateforme pour enfants, gags et morts rigolotes façon BD.",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "phaser": "4.2.1"
+  },
+  "devDependencies": {
+    "typescript": "~5.9.3",
+    "vite": "^8.3.3"
+  }
+}

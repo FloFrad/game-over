@@ -27,6 +27,17 @@ export const album = {
   get total() {
     return DEATHS.length;
   },
+  /** Efface une mort de l'album (cheat code de l'album). Renvoie true si elle y était. */
+  remove(id: DeathId): boolean {
+    if (!found.delete(id)) return false;
+    try {
+      localStorage.setItem(KEY, JSON.stringify([...found]));
+    } catch {
+      /* ignore */
+    }
+    return true;
+  },
+
   /** Ajoute une mort. Renvoie true si elle est nouvelle. */
   add(id: DeathId): boolean {
     if (found.has(id)) return false;

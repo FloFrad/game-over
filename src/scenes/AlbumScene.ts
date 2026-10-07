@@ -16,6 +16,9 @@ const GRID_TOP = 124;
 const PER_PAGE = 8;
 /** Page ouverte (gardée d'une ouverture à l'autre). */
 let page = 0;
+/** Cheat code : taper EFFACE dans l'album, puis toucher une case pour la remettre à « ? ». */
+const CHEAT = 'EFFACE';
+let eraseMode = false;
 
 /** Ouvre l'album par-dessus `from` (qui est mise en pause et reprend à la fermeture). */
 export function openAlbum(from: Phaser.Scene): void {
@@ -30,6 +33,7 @@ export class AlbumScene extends Phaser.Scene {
 
   create(data: { caller: string }): void {
     const close = () => {
+      eraseMode = false;
       this.scene.stop();
       this.scene.resume(data.caller);
     };
@@ -46,7 +50,14 @@ export class AlbumScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setShadow(4, 4, CSS.ink, 0, true, true);
     this.add
-      .text(GAME_WIDTH / 2, 102, `${album.size} / ${album.total} morts découvertes`, { fontFamily: FONT_BODY, fontSize: '22px', color: CSS.muted })
+      .text(
+        GAME_WIDTH / 2,
+        102,
+        eraseMode ? 'EFFACEMENT : touche une case (retape EFFACE pour quitter)' : `${album.size} / ${album.total} morts découvertes`,
+        eraseMode
+          ? { fontFamily: FONT_BODY, fontSize: '20px', color: '#FFFFFF', backgroundColor: CSS.tomato, padding: { x: 10, y: 2 } }
+          : { fontFamily: FONT_BODY, fontSize: '22px', color: CSS.muted },
+      )
       .setOrigin(0.5);
 
     // Grille : 4 colonnes × 2 rangées par page, une page par groupe de morts (flèches ◀ ▶)
@@ -72,6 +83,16 @@ export class AlbumScene extends Phaser.Scene {
         card.add(this.add.text(0, -14, '?', { fontFamily: FONT_DISPLAY, fontSize: '78px', color: CSS.muted }).setOrigin(0.5));
         card.add(this.add.text(-CARD_W / 2 + 12, -CARD_H / 2 + 8, `N° ${d.n}`, { fontFamily: FONT_DISPLAY, fontSize: '22px', color: CSS.muted }));
       }
+      if (eraseMode && open) {
+        // mode effacement : la case tremble et rougit ; un toucher la réinitialise
+        bg.lineStyle(5, COLORS.tomato, 1).strokeRoundedRect(-CARD_W / 2, -CARD_H / 2, CARD_W, CARD_H, 10);
+        this.tweens.add({ targets: card, angle: { from: -1.2, to: 1.2 }, yoyo: true, repeat: -1, duration: 90 });
+        card.setSize(CARD_W, CARD_H).setInteractive({ useHandCursor: true });
+        card.on('pointerup', () => {
+          album.remove(d.id);
+          this.scene.restart(data);
+        });
+      }
       card.add(
         this.add
           .text(0, 56, open ? d.name : 'Mort secrète', { fontFamily: FONT_BODY, fontSize: open && d.name.length > 24 ? '15px' : '18px', color: open ? CSS.ink : CSS.muted })
@@ -93,6 +114,17 @@ export class AlbumScene extends Phaser.Scene {
       this.input.keyboard?.on('keydown-LEFT', () => go(-1));
       this.input.keyboard?.on('keydown-RIGHT', () => go(1));
     }
+
+    // Cheat code : taper EFFACE active / désactive le mode effacement
+    let typed = '';
+    this.input.keyboard?.on('keydown', (e: KeyboardEvent) => {
+      if (e.key.length !== 1) return;
+      typed = (typed + e.key.toUpperCase()).slice(-CHEAT.length);
+      if (typed === CHEAT) {
+        eraseMode = !eraseMode;
+        this.scene.restart(data);
+      }
+    });
 
     comicButton(this, GAME_WIDTH / 2 - 40, 488, 'FERMER', close, { width: 260 });
     this.input.keyboard?.on('keydown-ESC', close);

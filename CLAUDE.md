@@ -36,7 +36,7 @@ src/
   objects/Hero.ts         héros : course, saut (coyote time, mémoire du saut, saut court), Géant, Minus, Fantôme, vol (Plume), glissade (banane), glace, outil en main (épée / poêle / boomerang)
   objects/Gloumpf.ts      monstre de base : patrouille, demi-tour au bord du vide
   objects/Anvil.ts        enclume : ombre + « ! » d'alerte, chute, pose
-  objects/Bird.ts         oiseau affamé qui patrouille en haut pendant le vol
+  objects/Bird.ts         oiseau affamé : traverse l'écran en haut pendant le vol, puis disparaît un moment (`birdPause`)
   objects/hazard.ts       interface Hazard + contexte Ctx : chaque piège/monstre renvoie l'id de la mort qu'il cause
   objects/foes.ts         ruche, grenouille, escargot, armure, moustique, porte-bouche, coffre qui mord, stalactite, tireurs (bonhomme de neige, dragon)
   objects/terrain.ts      ponts qui cèdent, nénuphars, champignons rebondissants, sables mouvants

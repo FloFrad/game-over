@@ -17,6 +17,9 @@ Un petit chevalier têtu traverse des niveaux courts pour retrouver la princesse
 | Alerte avant une enclume | 1,5 s | 0,85 s |
 | Durée potion Géante | 13 s | 9 s |
 | Durée potion Plume | 10 s | 7 s |
+| Cœurs des boss | 2 | 4 |
+| Boss | plus lents, alertes plus longues, sonné 2,8 s | vitesse normale, sonné 1,6 s |
+| Oiseau (Plume) : pause hors écran entre deux passages | 8 s | 4 s |
 
 Réglages dans `src/config.ts` (`MODES`).
 
@@ -53,7 +56,7 @@ Réglages dans `src/config.ts` (`MODES`).
 3. **La peau de banane** — glisser jusque dans un trou (ZIOUUU !)
 4. **Le plafond trop bas** — sauter en Géant dans le tunnel (BONK !)
 5. **L'enclume du destin** — rester sous l'ombre (CLONG !)
-6. **L'oiseau affamé** — voler trop haut avec la Plume (MIAM !)
+6. **L'oiseau affamé** — voler trop haut avec la Plume quand l'oiseau passe (MIAM !) ; il traverse l'écran puis disparaît un long moment
 7. **Le réveil du Ronchon** — toucher le troll endormi (ATCHOUM !)
 
 Parcours : départ → Gloumpfs → trou → épée sur une planche → peau de banane + trou → potion Géante → mur de caisses → tunnel bas → 2 enclumes → potion Plume → Ronchon sur le pont → château, princesse.
@@ -78,7 +81,7 @@ Parcours : départ → Gloumpfs → trou → épée sur une planche → peau de 
 ### Mécaniques à retenir
 
 - **Chaque piège s'annonce** : ruche qui tremble, gorge de la grenouille qui gonfle, « ! » au-dessus du monstre, ombre au sol (stalactite, Crapouille), porte qui entrouvre sa bouche, coffre qui tremble, planche qui s'enfonce.
-- **Boss** : 3 cœurs (Petit) ou 4 (Grand). Après chaque coup le boss est sonné et inoffensif un moment. La herse d'entrée se ferme derrière le héros, celle de sortie s'ouvre à la victoire. Un drapeau juste avant l'arène : on rejoue le combat sans refaire le niveau.
+- **Boss** : 2 cœurs (Petit) ou 4 (Grand). Après chaque coup le boss est sonné et inoffensif un moment. La herse d'entrée se ferme derrière le héros, celle de sortie s'ouvre à la victoire. Un drapeau juste avant l'arène : on rejoue le combat sans refaire le niveau.
 - **Un seul outil en main** : épée (4 coups), poêle (renvoie les boules de neige/feu ; si personne ne les reçoit, elles reviennent : « BONG ! »), boomerang (le « Petit chevalier » l'attrape tout seul au sol ; le « Grand » doit appuyer sur TAPER au bon moment).
 - **Potions** (une seule active à la fois, elles réapparaissent) : Géante, Plume, Minus (passe les tunnels d'une case, ne finit pas tant qu'on est coincé), Fantôme (les monstres ne le voient pas).
 - **Fin du jeu** : le héros sauve enfin la princesse… qui ouvre une trappe par erreur. Dernière case de l'album : « Le sauvetage raté ».

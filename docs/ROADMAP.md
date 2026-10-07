@@ -50,6 +50,7 @@ Pour ajouter un niveau : sa carte dans `src/levels/`, l'inscrire dans `levels/in
 - [x] Fin du jeu : la princesse ouvre la trappe par erreur → dernière case « Le sauvetage raté », écran FIN
 - [x] Écran de victoire avec bouton « niveau suivant », carte avec cadenas selon la progression
 - [x] Hors connexion : tous les nouveaux sprites sont dans le cache du service worker (`VERSION` = `paulochon-v1.0`)
+- [x] Réglages après premiers essais : l'oiseau de la Plume disparaît 8 s (Petit) / 4 s (Grand) après son passage et n'attrape que s'il est tout près ; boss du « Petit chevalier » à 2 cœurs, plus lents et sonnés plus longtemps (`bossCalm`, `birdPause` dans `MODES`)
 - [ ] **Test sur iPad réel** : multi-touch, performances sur les niveaux chargés (monde 4), taille des boutons, son
 - [ ] Équilibrage avec de vrais enfants (5 et 10 ans) : durées d'alerte, vitesse des monstres (`MODES` dans `config.ts`)
 

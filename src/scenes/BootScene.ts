@@ -1,7 +1,7 @@
 // Chargement : sprites SVG (rasterisés à 2×), textures générées, polices.
 
 import Phaser from 'phaser';
-import { SPRITE_RES, SPRITES, type SpriteKey } from '../config';
+import { BIG_SPRITES, SPRITE_RES, SPRITES, type BigSpriteKey, type SpriteKey } from '../config';
 import { generateTextures } from '../gfx/textures';
 
 /** Rapport largeur/hauteur de chaque SVG (viewBox), pour les rasteriser sans déformation. */
@@ -17,6 +17,7 @@ const RATIOS: Record<SpriteKey, number> = {
   anvil: 306 / 144,
   peel: 80 / 50,
   bird: 132 / 84,
+  skull: 120 / 130,
 };
 
 export class BootScene extends Phaser.Scene {
@@ -31,6 +32,11 @@ export class BootScene extends Phaser.Scene {
     for (const [key, s] of Object.entries(SPRITES) as [SpriteKey, (typeof SPRITES)[SpriteKey]][]) {
       const h = s.h * SPRITE_RES;
       this.load.svg(key, `assets/svg/${s.file}.svg`, { width: Math.round(h * RATIOS[key]), height: h });
+    }
+    // Grandes versions pour les cases de BD
+    for (const [key, res] of Object.entries(BIG_SPRITES) as [BigSpriteKey, number][]) {
+      const h = SPRITES[key].h * res;
+      this.load.svg(`${key}Big`, `assets/svg/${SPRITES[key].file}.svg`, { width: Math.round(h * RATIOS[key]), height: h });
     }
   }
 

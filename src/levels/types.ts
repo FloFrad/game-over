@@ -9,12 +9,12 @@
 //   @  départ du héros (sur la case au-dessus du sol)
 //   K  drapeau de sauvegarde
 //   G  Gloumpf (patrouille, à écraser en sautant dessus)
-//   S  épée en bois                         [à coder]
+//   S  épée en bois
 //   P  potion Géante
-//   F  potion Plume (vol)                   [à coder]
-//   B  peau de banane                       [à coder]
-//   A  déclencheur d'enclume (colonne)      [à coder]
-//   R  Ronchon endormi (bord gauche)        [à coder]
+//   F  potion Plume (vol)
+//   B  peau de banane
+//   A  déclencheur d'enclume (colonne ; 1re enclume sur le héros, 2e un peu devant lui)
+//   R  Ronchon endormi (bord gauche)
 //   Z  princesse Mimicracra = fin du niveau
 
 export interface LevelData {

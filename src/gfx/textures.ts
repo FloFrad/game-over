@@ -91,6 +91,20 @@ export function generateTextures(scene: Phaser.Scene): void {
   // Collines (textures répétables pour le parallaxe)
   make(scene, 'hills-far', GAME_WIDTH, 300, (g) => hills(g, 300, 90, 40, 0xa9ddb0, 1.3));
   make(scene, 'hills-near', GAME_WIDTH, 300, (g) => hills(g, 300, 100, 48, 0x86c977, 4.1));
+  // Étoile blanche qui tourne derrière les objets à ramasser
+  make(scene, 'glow', 72, 72, (g) => {
+    const pts: Phaser.Math.Vector2[] = [];
+    for (let i = 0; i < 16; i++) {
+      const r = i % 2 ? 22 : 33;
+      const a = (i * Math.PI) / 8;
+      pts.push(new Phaser.Math.Vector2(36 + Math.cos(a) * r, 36 + Math.sin(a) * r));
+    }
+    g.fillStyle(0xffffff, 0.6).fillPoints(pts, true);
+  });
+  // Trame de points « impression BD » (fond des cases)
+  make(scene, 'bg-dots', 14, 14, (g) => {
+    g.fillStyle(0xffffff, 0.24).fillCircle(7, 7, 2);
+  });
   // Particule (débris, gouttes)
   make(scene, 'dot', 12, 12, (g) => {
     g.fillStyle(COLORS.ink, 1).fillCircle(6, 6, 6);

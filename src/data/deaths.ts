@@ -1,5 +1,6 @@
 // Catalogue des morts : chacune débloque une case de l'album.
 // Ajouter ici les morts des nouveaux niveaux (id unique, numéro global).
+// Chaque mort a aussi sa case de BD : ajouter une entrée dans ARTS (src/ui/deathPanel.ts).
 
 export type DeathId = 'colle' | 'plongeon' | 'banane' | 'bonk' | 'enclume' | 'oiseau' | 'ronchon';
 

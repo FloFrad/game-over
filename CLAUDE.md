@@ -30,15 +30,22 @@ src/
   data/deaths.ts          catalogue des morts (id, n°, onomatopée, texte)
   levels/types.ts         format ASCII des niveaux + parseLevel() + légende des caractères
   levels/level1.ts        niveau 1 (12 × 112 cases)
-  objects/Hero.ts         héros : course, saut (coyote time, mémoire du saut, saut court), Géant
+  objects/Hero.ts         héros : course, saut (coyote time, mémoire du saut, saut court), Géant, vol (Plume), glissade (banane), épée
   objects/Gloumpf.ts      monstre de base : patrouille, demi-tour au bord du vide
-  scenes/BootScene.ts     charge les SVG (rasterisés à 2×), génère les textures, attend les polices
-  scenes/TitleScene.ts    choix du mode
-  scenes/LevelScene.ts    construction du niveau, collisions, morts, victoire, HUD
-  scenes/ResultScene.ts   panneau GAME OVER / niveau réussi
+  objects/Anvil.ts        enclume : ombre + « ! » d'alerte, chute, pose
+  objects/Bird.ts         oiseau affamé qui patrouille en haut pendant le vol
+  scenes/BootScene.ts     charge les SVG (rasterisés à 2×, et à 3-4× pour les cases de BD), génère les textures, attend les polices
+  scenes/TitleScene.ts    choix du mode, accès à l'album
+  scenes/LevelScene.ts    construction du niveau, collisions, objets, pièges, morts, victoire
+  scenes/ResultScene.ts   mort : case de BD (grande, ~3 s) puis panneau GAME OVER + REJOUER ; victoire
+  scenes/AlbumScene.ts    album des morts (par-dessus la scène qui l'ouvre ; `openAlbum(scene)`)
+  scenes/PauseScene.ts    pause (Échap / P / bouton)
   systems/Controls.ts     clavier (flèches, WASD, ZQSD, Espace, X/E) + tactile unifiés
   systems/album.ts        album des morts (localStorage)
-  ui/                     onomatopées, boutons BD, boutons tactiles
+  systems/sound.ts        sons WebAudio synthétisés, bouton couper le son
+  ui/deathPanel.ts        case de BD illustrée de chaque mort (`ARTS`), utilisée par ResultScene et AlbumScene
+  ui/Hud.ts               titre, album, son, pause, barres de potion, compteur d'épée
+  ui/                     onomatopées, bulles, boutons BD, boutons tactiles
   gfx/textures.ts         tuiles et décor dessinés au démarrage
 public/assets/svg/        personnages et objets (SVG, style planche)
 docs/                     game design, style, roadmap, prototype HTML de référence
@@ -51,7 +58,7 @@ docs/                     game design, style, roadmap, prototype HTML de référ
 3. **Jamais frustrant.** Réapparition immédiate au dernier drapeau, potions qui réapparaissent, pas de vies limitées. Un piège doit être lisible avant de tuer (ombre, bruit, animation d'alerte).
 4. **Tablette d'abord.** Boutons tactiles ≥ 64 px, multi-touch (courir + sauter), pas de survol nécessaire, testé en paysage. Viser 60 i/s sur un iPad de quelques années : peu d'objets physiques, textures pré-rasterisées.
 5. **Style graphique** (docs/STYLE_GUIDE.md) : contour noir épais (6 px dans les SVG), aplats, palette fixe, polices Bangers (titres, onomatopées) et Patrick Hand (textes).
-6. **Données plutôt que code.** Un niveau = une carte ASCII + des listes ; une mort = une entrée dans `data/deaths.ts`. Ajouter un piège = un caractère dans la légende + son comportement dans `LevelScene`.
+6. **Données plutôt que code.** Un niveau = une carte ASCII + des listes ; une mort = une entrée dans `data/deaths.ts` + sa case de BD (une entrée dans `ARTS` de `ui/deathPanel.ts`, sinon case générique). Ajouter un piège = un caractère dans la légende + son comportement dans `LevelScene`.
 7. Textes du jeu et commentaires en **français**.
 
 ## Avant de dire qu'une tâche est finie

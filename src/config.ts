@@ -87,7 +87,15 @@ export const SPRITES = {
   anvil: { file: 'anvil', h: 56 },
   peel: { file: 'banana-peel', h: 28 },
   bird: { file: 'bird', h: 58 },
+  skull: { file: 'skull', h: 60 },
 } as const;
 
 export type SpriteKey = keyof typeof SPRITES;
 export const SPRITE_RES = 2;
+
+/**
+ * Versions « grande case » des sprites, pour les vignettes de BD (src/ui/deathPanel.ts) :
+ * rasterisées plus finement (facteur ×N) sous la clé `${nom}Big`, pour rester nettes quand on agrandit.
+ */
+export const BIG_SPRITES = { hero: 4, gloumpf: 4, anvil: 4, bird: 4, ghost: 4, peel: 4, skull: 4, ronchon: 3 } as const;
+export type BigSpriteKey = keyof typeof BIG_SPRITES;

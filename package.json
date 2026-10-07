@@ -1,7 +1,7 @@
 {
   "name": "messire-paulochon",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Messire Paulochon — jeu de plateforme pour enfants, gags et morts rigolotes façon BD.",
   "scripts": {

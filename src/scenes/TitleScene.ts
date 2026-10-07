@@ -4,6 +4,7 @@ import Phaser from 'phaser';
 import { COLORS, CSS, FONT_BODY, FONT_DISPLAY, GAME_HEIGHT, GAME_WIDTH, MODES, SPRITE_RES, type Mode } from '../config';
 import { album } from '../systems/album';
 import { comicButton } from '../ui/buttons';
+import { openAlbum } from './AlbumScene';
 
 export class TitleScene extends Phaser.Scene {
   constructor() {
@@ -33,9 +34,9 @@ export class TitleScene extends Phaser.Scene {
     this.add.image(190, 290, 'hero').setScale(s * 1.5);
     this.add.image(770, 290, 'princess').setScale(s * 1.3);
     this.add
-      .text(480, 262, 'Va retrouver la princesse Mimicracra… si tu y arrives.\nChaque façon de perdre remplit ton album des morts !', {
+      .text(480, 252, 'Va retrouver la princesse Mimicracra… si tu y arrives.\nChaque façon de perdre remplit ton album des morts !', {
         fontFamily: FONT_BODY,
-        fontSize: '24px',
+        fontSize: '22px',
         color: CSS.ink,
         align: 'center',
         wordWrap: { width: 460 },
@@ -46,14 +47,18 @@ export class TitleScene extends Phaser.Scene {
       this.registry.set('mode', mode);
       this.scene.start('Level', { fromCheckpoint: false });
     };
-    comicButton(this, 345, 380, MODES.petit.label, () => start('petit'), { width: 270, subtitle: MODES.petit.hint });
-    comicButton(this, 615, 380, MODES.grand.label, () => start('grand'), { width: 270, subtitle: MODES.grand.hint, fill: COLORS.tomato, textColor: '#FFFFFF' });
+    comicButton(this, 345, 352, MODES.petit.label, () => start('petit'), { width: 270, subtitle: MODES.petit.hint });
+    comicButton(this, 615, 352, MODES.grand.label, () => start('grand'), { width: 270, subtitle: MODES.grand.hint, fill: COLORS.tomato, textColor: '#FFFFFF' });
 
+    comicButton(this, 480, 432, `ALBUM DES MORTS  ${album.size} / ${album.total}`, () => openAlbum(this), { width: 400, height: 64, fill: 0xffffff, fontSize: 28 });
+    const touch = this.sys.game.device.input.touch;
     this.add
-      .text(480, 460, `Album des morts : ${album.size} / ${album.total}`, { fontFamily: FONT_BODY, fontSize: '20px', color: CSS.muted })
+      .text(480, 481, touch ? 'Tablette : flèches à gauche, SAUT et TAPER à droite.' : 'Clavier : flèches (ou Q / D), Espace pour sauter, X pour taper avec l\'épée.', {
+        fontFamily: FONT_BODY, fontSize: '16px', color: CSS.muted,
+      })
       .setOrigin(0.5);
 
     this.input.keyboard?.once('keydown-ENTER', () => start('petit'));
-    this.add.text(GAME_WIDTH - 8, GAME_HEIGHT - 6, 'v0.1', { fontFamily: FONT_BODY, fontSize: '14px', color: CSS.ink }).setOrigin(1, 1);
+    this.add.text(GAME_WIDTH - 8, GAME_HEIGHT - 6, 'v0.2', { fontFamily: FONT_BODY, fontSize: '14px', color: CSS.ink }).setOrigin(1, 1);
   }
 }

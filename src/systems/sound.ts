@@ -5,7 +5,8 @@ const KEY = 'paulochon.muted';
 
 export type SfxKind =
   | 'jump' | 'stomp' | 'pick' | 'swing' | 'crack' | 'clong' | 'whistle' | 'death'
-  | 'slip' | 'flag' | 'pouf' | 'sneeze' | 'win' | 'pop';
+  | 'slip' | 'flag' | 'pouf' | 'sneeze' | 'win' | 'pop'
+  | 'boing' | 'buzz' | 'splash' | 'slurp' | 'chomp' | 'clang' | 'bong' | 'sizzle' | 'cling' | 'alert' | 'boom' | 'whoosh' | 'gate';
 
 let ctx: AudioContext | null = null;
 let muted = loadMuted();
@@ -116,6 +117,19 @@ export const sound = {
       case 'sneeze': noise(0.45, 0.3); tone(600, 200, 0.3, 'sawtooth', 0.08); break;
       case 'win': [523, 659, 784, 1046].forEach((f, i) => tone(f, f, 0.2, 'square', 0.08, i * 0.13)); break;
       case 'pop': tone(500, 900, 0.08, 'triangle', 0.1); break;
+      case 'boing': tone(180, 900, 0.3, 'sine', 0.2); tone(900, 300, 0.2, 'sine', 0.1, 0.3); break;
+      case 'buzz': tone(220, 240, 0.5, 'sawtooth', 0.05); tone(225, 260, 0.5, 'sawtooth', 0.04, 0.02); break;
+      case 'splash': noise(0.35, 0.25); tone(500, 120, 0.3, 'sine', 0.1); break;
+      case 'slurp': tone(900, 200, 0.25, 'sawtooth', 0.09); noise(0.12, 0.15, 0.1); break;
+      case 'chomp': tone(200, 80, 0.12, 'square', 0.16); tone(160, 60, 0.14, 'square', 0.16, 0.14); noise(0.1, 0.2); break;
+      case 'clang': tone(300, 280, 0.45, 'triangle', 0.22); tone(900, 860, 0.35, 'square', 0.06); noise(0.06, 0.2); break;
+      case 'bong': tone(120, 110, 0.5, 'sine', 0.3); tone(240, 230, 0.4, 'triangle', 0.1); break;
+      case 'sizzle': noise(0.5, 0.2); tone(1200, 300, 0.4, 'sawtooth', 0.04); break;
+      case 'cling': tone(1800, 1700, 0.25, 'sine', 0.1); tone(2400, 2300, 0.2, 'sine', 0.06, 0.05); break;
+      case 'alert': tone(700, 700, 0.07, 'square', 0.06); tone(900, 900, 0.09, 'square', 0.06, 0.09); break;
+      case 'boom': tone(90, 40, 0.5, 'sine', 0.35); noise(0.3, 0.3); break;
+      case 'whoosh': noise(0.18, 0.1); tone(400, 800, 0.15, 'sine', 0.04); break;
+      case 'gate': tone(160, 100, 0.4, 'sawtooth', 0.12); noise(0.25, 0.15, 0.25); break;
     }
   },
 };

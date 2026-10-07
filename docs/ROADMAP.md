@@ -39,6 +39,18 @@ Comportement et réglages repris du prototype `docs/prototype/niveau-1-prototype
 
 Pour ajouter un niveau : sa carte dans `src/levels/`, l'inscrire dans `levels/index.ts` (le monde est déjà dans `data/worlds.ts`).
 
-## v1.0 — 12 niveaux
+## v0.4 → v1.0 — Le jeu complet (fait, reste le test sur iPad)
 
-Voir docs/GAME_DESIGN.md (4 mondes × 3 niveaux, un boss par monde, nouvelles morts à chaque niveau).
+- [x] **12 niveaux, 4 mondes** (forêt, marais, château glacé, volcan), chacun avec son thème visuel, ses pièges et son boss
+- [x] **31 morts** dans l'album (une case de BD illustrée chacune), album en pages de 8 avec flèches
+- [x] Monde 1 : ruches et abeilles, champignon qui rebondit / champignon qui rebondit TROP, pont de lianes ; boss **Maman Gloumpf** (saute-lui sur la tête)
+- [x] Monde 2 : potion **Minus** (tunnels d'une case), escargots, sables mouvants (SAUT pour remonter), grenouilles à langue, nénuphars qui coulent, moustiques ; boss **Crapouille** (grands bonds, ombre au sol)
+- [x] Monde 3 : glace glissante, stalactites, bonshommes de neige qui éternuent, armures, **poêle à frire** (renvoie les boules… parfois sur soi), potion **Fantôme**, portes-bouches ; boss **Gros Floc** (renvoyer ses boules de neige)
+- [x] Monde 4 : lave, planches pourries, dragons qui éternuent, **boomerang** (qui revient !), pont de pierre qui s'effondre, coffres qui mordent ; boss **le Ronchon** (boomerang + sauter les cailloux de sa massue)
+- [x] Fin du jeu : la princesse ouvre la trappe par erreur → dernière case « Le sauvetage raté », écran FIN
+- [x] Écran de victoire avec bouton « niveau suivant », carte avec cadenas selon la progression
+- [x] Hors connexion : tous les nouveaux sprites sont dans le cache du service worker (`VERSION` = `paulochon-v1.0`)
+- [ ] **Test sur iPad réel** : multi-touch, performances sur les niveaux chargés (monde 4), taille des boutons, son
+- [ ] Équilibrage avec de vrais enfants (5 et 10 ans) : durées d'alerte, vitesse des monstres (`MODES` dans `config.ts`)
+
+Idées pour la suite : cases de BD animées, niveaux bonus, une musique, un mode « 2 joueurs ».

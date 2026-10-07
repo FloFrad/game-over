@@ -23,6 +23,11 @@ const FLY_THRUST = 2700;
 const FLY_MAX_UP = 360;
 const ATTACK_TIME = 0.22;
 const ATTACK_COOLDOWN = 0.32;
+const TINY_SCALE = 0.55 / SPRITE_RES;
+/** Sur la glace, le héros accélère et freine très mollement. */
+const ICE_ACCEL = 330;
+
+export type Tool = 'sword' | 'pan' | 'boomerang';
 
 /** Hauteur (px de jeu) du héros normal à l'écran ; sert à placer l'épée et les ailes. */
 const DISPLAY_H = 66;
@@ -39,7 +44,16 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
   slideTime = 0;
   slideDir: 1 | -1 = 1;
   bananaTime = 0;
-  hasSword = false;
+  tinyTime = 0;
+  ghostTime = 0;
+  /** Outil en main : épée en bois, poêle à frire ou boomerang (le dernier ramassé remplace l'autre). */
+  tool: Tool | null = null;
+  /** Lancé par un champignon : le saut court ne coupe pas l'élan tant qu'on monte. */
+  private launched = false;
+  /** Vrai quand le héros est posé sur de la glace (réglé par la scène à chaque image). */
+  onIce = false;
+  /** Tant que ce test renvoie faux, la potion Minus ne finit pas (on ne ressort pas coincé dans la roche). */
+  canGrow: () => boolean = () => true;
   private coyote = 0;
   private jumpBuf = 0;
   private walkT = 0;
@@ -56,7 +70,8 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
     scene.physics.add.existing(this);
     this.setOrigin(0.5, 1).setScale(BASE_SCALE).setDepth(20);
     this.arcade.setSize(BODY_W, BODY_H).setOffset(BODY_OFFSET_X, BODY_OFFSET_Y);
-    this.arcade.setMaxVelocity(1000, PHYSICS.maxFall);
+    // Vers le haut on peut dépasser (champignons rebondissants) ; la chute, elle, est plafonnée dans step().
+    this.arcade.setMaxVelocity(1000, 2200);
     this.setCollideWorldBounds(true);
 
     this.sword = scene.add.image(x, y, 'sword').setOrigin(0.5, 0.87).setDepth(21).setVisible(false);
@@ -66,6 +81,54 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
 
   get arcade(): Phaser.Physics.Arcade.Body {
     return this.body as Phaser.Physics.Arcade.Body;
+  }
+
+  get hasSword(): boolean {
+    return this.tool === 'sword';
+  }
+
+  set hasSword(v: boolean) {
+    if (v) this.tool = 'sword';
+    else if (this.tool === 'sword') this.tool = null;
+  }
+
+  get isTiny(): boolean {
+    return this.tinyTime > 0;
+  }
+
+  get isGhost(): boolean {
+    return this.ghostTime > 0;
+  }
+
+  /** Potion Minus : tout petit, on passe dans les trous d'une case. */
+  makeTiny(duration: number): void {
+    this.tinyTime = duration;
+    this.setScale(TINY_SCALE);
+  }
+
+  /** Potion Fantôme : invisible pour les monstres. */
+  makeGhost(duration: number): void {
+    this.ghostTime = duration;
+  }
+
+  /** Toutes les potions s'arrêtent (on en boit une nouvelle) : taille normale, plus de vol, plus fantôme. */
+  clearPotions(): void {
+    this.giantTime = 0;
+    this.tinyTime = 0;
+    this.ghostTime = 0;
+    if (this.flyTime > 0) this.emit('flyEnd');
+    this.flyTime = 0;
+    this.arcade.setGravityY(0);
+    this.setScale(BASE_SCALE);
+    this.setAlpha(1);
+  }
+
+  /** Choisit l'outil en main : épée, poêle ou boomerang (null = rien). */
+  setTool(tool: Tool | null): void {
+    this.tool = tool;
+    this.sword.setTexture(tool === 'pan' ? 'pan' : 'sword');
+    if (tool === 'pan') this.sword.setOrigin(0.94, 0.5);
+    else this.sword.setOrigin(0.5, 0.87);
   }
 
   get isGiant(): boolean {
@@ -113,6 +176,26 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
         this.emit('shrink');
       }
     }
+    if (this.tinyTime > 0) {
+      this.tinyTime -= dt;
+      if (this.tinyTime <= 0) {
+        if (this.canGrow()) {
+          this.tinyTime = 0;
+          this.setScale(BASE_SCALE);
+          this.emit('grow');
+        } else {
+          this.tinyTime = 0.05; // pas la place pour grandir : on attend d'être sorti du tunnel
+        }
+      }
+    }
+    if (this.ghostTime > 0) {
+      this.ghostTime -= dt;
+      if (this.ghostTime <= 0) {
+        this.ghostTime = 0;
+        this.emit('ghostEnd');
+      }
+    }
+    this.setAlpha(this.ghostTime > 0 ? (this.ghostTime < 2 && Math.floor(this.ghostTime * 8) % 2 ? 0.8 : 0.45) : 1);
     if (this.flyTime > 0) {
       this.flyTime -= dt;
       if (this.flyTime <= 0) {
@@ -133,7 +216,8 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
       b.setVelocityX(this.slideDir * SLIDE_SPEED);
     } else {
       const target = dir * this.speed * (this.isGiant ? 1.05 : 1);
-      b.setVelocityX(approach(b.velocity.x, target, (grounded ? 2600 : 1800) * dt));
+      const accel = grounded ? (this.onIce ? ICE_ACCEL : 2600) : 1800;
+      b.setVelocityX(approach(b.velocity.x, target, accel * dt));
       if (dir !== 0 && dir !== this.face) {
         this.face = dir as 1 | -1;
         this.setFlipX(this.face < 0);
@@ -152,7 +236,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
     }
     if (this.flyTime > 0) {
       if (c.jump && !grounded) b.setVelocityY(Math.max(b.velocity.y - FLY_THRUST * dt, -FLY_MAX_UP));
-    } else if (!c.jump && b.velocity.y < -PHYSICS.jumpCutVelocity) {
+    } else if (!this.launched && !c.jump && b.velocity.y < -PHYSICS.jumpCutVelocity) {
       b.setVelocityY(-PHYSICS.jumpCutVelocity);
     }
 
@@ -168,6 +252,8 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
       this.setAngle(0);
     }
 
+    if (b.velocity.y > PHYSICS.maxFall) b.setVelocityY(PHYSICS.maxFall);
+    if (b.velocity.y >= 0) this.launched = false;
     this.syncAccessories();
   }
 
@@ -175,17 +261,27 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
     this.arcade.setVelocityY(-PHYSICS.stompBounce);
   }
 
+  /** Grand bond (champignon) : on monte jusqu'au bout, même si on lâche SAUT. */
+  launch(vy: number): void {
+    this.arcade.setVelocityY(-vy);
+    this.launched = true;
+  }
+
   // ------------------------------------------------------------------ épée
 
-  /** Lance un coup d'épée. Renvoie 'swing', 'nosword' (pas d'épée) ou null (trop tôt). */
-  tryAttack(): 'swing' | 'nosword' | null {
+  /** Lance un coup d'épée / de poêle ou un boomerang. Renvoie 'swing', 'throw', 'nosword' (rien en main) ou null (trop tôt). */
+  tryAttack(): 'swing' | 'throw' | 'nosword' | null {
     if (this.attackCd > 0) return null;
-    if (!this.hasSword) {
+    if (!this.tool) {
       this.attackCd = 0.9;
       return 'nosword';
     }
-    this.attackT = ATTACK_TIME;
     this.attackCd = ATTACK_COOLDOWN;
+    if (this.tool === 'boomerang') {
+      this.attackCd = 0.5;
+      return 'throw';
+    }
+    this.attackT = ATTACK_TIME;
     return 'swing';
   }
 
@@ -193,7 +289,7 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
   attackBox(): Phaser.Geom.Rectangle | null {
     if (this.attackT <= 0) return null;
     const b = this.arcade;
-    const w = this.isGiant ? 84 : 48;
+    const w = (this.isGiant ? 84 : this.tool === 'pan' ? 62 : 48) * (this.isTiny ? 0.9 : 1);
     return new Phaser.Geom.Rectangle(this.face > 0 ? b.right - 4 : b.left - w + 4, b.top + b.height * 0.1, w, b.height * 0.75);
   }
 
@@ -207,20 +303,28 @@ export class Hero extends Phaser.Physics.Arcade.Sprite {
   }
 
   private syncAccessories(): void {
-    const s = this.scaleY * SPRITE_RES; // 1 = normal, 2 = géant
+    const s = this.scaleY * SPRITE_RES; // 1 = normal, 2 = géant, 0,55 = minus
     const b = this.arcade;
     const t = this.scene.time.now / 1000;
 
     // Épée dans la main (la main est à droite du centre du sprite, miroir si le héros regarde à gauche)
     this.swing.clear();
-    this.sword.setVisible(this.hasSword);
-    if (this.hasSword) {
+    const held = this.tool === 'sword' || this.tool === 'pan';
+    this.sword.setVisible(held);
+    if (held) {
       const hx = this.x + this.face * 0.2295 * DISPLAY_W * s;
       const hy = this.y - 0.2545 * DISPLAY_H * s;
       let ang = 0.35;
       if (this.attackT > 0) ang = -0.7 + (1 - this.attackT / ATTACK_TIME) * 2.6;
-      this.sword.setPosition(hx, hy).setRotation(ang * this.face);
-      this.sword.setScale((SWORD_DISPLAY_H * s) / this.sword.height);
+      if (this.tool === 'pan') {
+        // la poêle se tient debout : tête en haut, manche dans la main
+        this.sword.setFlipX(this.face < 0).setOrigin(this.face < 0 ? 0.06 : 0.94, 0.5);
+        this.sword.setPosition(hx, hy).setRotation(this.face * (Math.PI / 2 + ang * 0.7));
+      } else {
+        this.sword.setPosition(hx, hy).setRotation(ang * this.face);
+      }
+      if (this.tool === 'pan') this.sword.setScale((SWORD_DISPLAY_H * 1.15 * s) / this.sword.width);
+      else this.sword.setScale((SWORD_DISPLAY_H * s) / this.sword.height);
       if (this.attackT > 0) {
         const r = SWORD_DISPLAY_H * s * 0.85;
         this.swing.lineStyle(6, 0xffffff, 0.85).beginPath();

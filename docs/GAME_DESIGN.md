@@ -58,13 +58,27 @@ Réglages dans `src/config.ts` (`MODES`).
 
 Parcours : départ → Gloumpfs → trou → épée sur une planche → peau de banane + trou → potion Géante → mur de caisses → tunnel bas → 2 enclumes → potion Plume → Ronchon sur le pont → château, princesse.
 
-## Plan des 12 niveaux (proposition)
+## Les 12 niveaux
 
-| Monde | Niveaux | Nouveautés | Idées de morts |
+| Niv. | Nom | Nouveautés | Morts (n°) |
 |---|---|---|---|
-| 1. Forêt des Gloumpfs | 1–3 | Gloumpfs, Géante, Plume, épée | câlin collant, banane, enclume, ruche dérangée, champignon rebondissant trop fort, liane qui casse |
-| 2. Marais gluant | 4–6 | Potion Minus, sables mouvants, grenouilles | escargot écraseur, sables mouvants (GLOUP), nénuphar qui coule, grenouille qui gobe le héros, moustique géant |
-| 3. Château glacé | 7–9 | glace glissante, Poêle à frire, potion Fantôme | glissade sans fin, stalactite (CLING), bonhomme de neige qui éternue, armure qui se réveille, porte qui est une bouche |
-| 4. Volcan | 10–12 | lave, boomerang, Ronchon boss final | boomerang en pleine figure, pont qui s'effondre, dragon qui éternue, coffre au trésor qui mord, la princesse appuie sur le mauvais bouton (fin) |
+| 1 | La forêt des Gloumpfs | Gloumpfs, épée, banane, Géante, enclumes, Plume, Ronchon endormi | câlin collant (1), grand plongeon (2), peau de banane (3), plafond trop bas (4), enclume (5), oiseau affamé (6), réveil du Ronchon (7) |
+| 2 | Le chemin des abeilles | ruches, champignons (rouge = ressort, rose = TROP), pont de lianes | ruche dérangée (8), champignon trop rebondissant (9), liane qui casse (10) |
+| 3 | Maman Gloumpf | **boss** : saute-lui 3 fois sur la tête, elle crache de la gelée | gros câlin de Maman Gloumpf (11) |
+| 4 | Le marais gluant | potion **Minus**, tunnel d'une case, escargots, sables mouvants | escargot écraseur (12), sables mouvants (13) |
+| 5 | La mare aux nénuphars | grenouilles (gorge qui gonfle puis langue), nénuphars qui coulent, moustiques | nénuphar qui coule (14), grenouille gourmande (15) |
+| 6 | Crapouille | **boss** : grands bonds avec ombre au sol, sauter sur son dos | moustique géant (16), Crapouille s'assoit dessus (17) |
+| 7 | La glace et les stalactites | glace glissante, stalactites qui tremblent | glissade sans fin (18), stalactite (19) |
+| 8 | Les bonshommes de neige | bonshommes de neige qui éternuent, armures, **poêle** (renvoie), potion **Fantôme** | bonhomme de neige (20), armure (21), poêle (22) |
+| 9 | Gros Floc | portes qui ont des dents, **boss** : renvoyer ses boules à la poêle | porte qui a faim (23), Gros Floc (24) |
+| 10 | Les rivières de lave | lave, planches pourries, dragons qui éternuent | bain de lave (25), dragon (26) |
+| 11 | Le pont de pierre | **boomerang**, pont qui s'effondre, coffres qui mordent | boomerang (27), pont (28), coffre (29) |
+| 12 | Le Ronchon | **boss final** : boomerang dans la figure, sauter les cailloux de la massue ; puis la princesse | massue du Ronchon (30), sauvetage raté (31) |
 
-Fin du jeu : le héros sauve enfin la princesse… qui ouvre une trappe par erreur. Dernière case de l'album : « Le sauvetage raté ».
+### Mécaniques à retenir
+
+- **Chaque piège s'annonce** : ruche qui tremble, gorge de la grenouille qui gonfle, « ! » au-dessus du monstre, ombre au sol (stalactite, Crapouille), porte qui entrouvre sa bouche, coffre qui tremble, planche qui s'enfonce.
+- **Boss** : 3 cœurs (Petit) ou 4 (Grand). Après chaque coup le boss est sonné et inoffensif un moment. La herse d'entrée se ferme derrière le héros, celle de sortie s'ouvre à la victoire. Un drapeau juste avant l'arène : on rejoue le combat sans refaire le niveau.
+- **Un seul outil en main** : épée (4 coups), poêle (renvoie les boules de neige/feu ; si personne ne les reçoit, elles reviennent : « BONG ! »), boomerang (le « Petit chevalier » l'attrape tout seul au sol ; le « Grand » doit appuyer sur TAPER au bon moment).
+- **Potions** (une seule active à la fois, elles réapparaissent) : Géante, Plume, Minus (passe les tunnels d'une case, ne finit pas tant qu'on est coincé), Fantôme (les monstres ne le voient pas).
+- **Fin du jeu** : le héros sauve enfin la princesse… qui ouvre une trappe par erreur. Dernière case de l'album : « Le sauvetage raté ».

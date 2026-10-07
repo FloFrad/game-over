@@ -29,19 +29,25 @@ src/
   config.ts               dimensions, couleurs, physique, modes Petit/Grand, liste des sprites
   data/deaths.ts          catalogue des morts (id, n°, onomatopée, texte)
   levels/types.ts         format ASCII des niveaux + parseLevel() + légende des caractères
-  levels/level1.ts        niveau 1 (12 × 112 cases)
+  levels/level1.ts…level12.ts  les 12 niveaux (12 rangées × 100 à 136 colonnes)
   levels/index.ts         registre des niveaux jouables (numéro → carte)
   data/worlds.ts          les 4 mondes de la carte (3 niveaux chacun)
-  objects/Hero.ts         héros : course, saut (coyote time, mémoire du saut, saut court), Géant, vol (Plume), glissade (banane), épée
+  data/themes.ts          thème visuel de chaque monde (sol, ciel, collines, décor, eau)
+  objects/Hero.ts         héros : course, saut (coyote time, mémoire du saut, saut court), Géant, Minus, Fantôme, vol (Plume), glissade (banane), glace, outil en main (épée / poêle / boomerang)
   objects/Gloumpf.ts      monstre de base : patrouille, demi-tour au bord du vide
   objects/Anvil.ts        enclume : ombre + « ! » d'alerte, chute, pose
   objects/Bird.ts         oiseau affamé qui patrouille en haut pendant le vol
+  objects/hazard.ts       interface Hazard + contexte Ctx : chaque piège/monstre renvoie l'id de la mort qu'il cause
+  objects/foes.ts         ruche, grenouille, escargot, armure, moustique, porte-bouche, coffre qui mord, stalactite, tireurs (bonhomme de neige, dragon)
+  objects/terrain.ts      ponts qui cèdent, nénuphars, champignons rebondissants, sables mouvants
+  objects/Projectile.ts   boules de neige / de feu (renvoyables à la poêle), gelée, cailloux
+  objects/Boss.ts         les 4 boss (Maman Gloumpf, Crapouille, Gros Floc, Ronchon) et leurs arènes
   scenes/BootScene.ts     charge les SVG (rasterisés à 2×, et à 3-4× pour les cases de BD), génère les textures, attend les polices
   scenes/TitleScene.ts    choix du mode, accès à l'album
   scenes/MapScene.ts      carte du royaume : choix du niveau (cadenas, étoiles)
-  scenes/LevelScene.ts    construction du niveau, collisions, objets, pièges, morts, victoire
+  scenes/LevelScene.ts    construction du niveau, collisions, objets, pièges, boss et arènes, morts, victoire, finale du niveau 12
   scenes/ResultScene.ts   mort : case de BD (grande, ~3 s) puis panneau GAME OVER + REJOUER ; victoire
-  scenes/AlbumScene.ts    album des morts (par-dessus la scène qui l'ouvre ; `openAlbum(scene)`)
+  scenes/AlbumScene.ts    album des morts, 8 cases par page, flèches ◀ ▶ (par-dessus la scène qui l'ouvre ; `openAlbum(scene)`)
   scenes/PauseScene.ts    pause (Échap / P / bouton)
   systems/Controls.ts     clavier (flèches, WASD, ZQSD, Espace, X/E) + tactile unifiés
   systems/album.ts        album des morts (localStorage)
@@ -50,7 +56,7 @@ src/
   ui/deathPanel.ts        case de BD illustrée de chaque mort (`ARTS`), utilisée par ResultScene et AlbumScene
   ui/Hud.ts               titre, album, son, pause, barres de potion, compteur d'épée
   ui/                     onomatopées, bulles, boutons BD, boutons tactiles
-  gfx/textures.ts         tuiles et décor dessinés au démarrage
+  gfx/textures.ts         tuiles et décor dessinés au démarrage (une série de textures par thème : `tile-ground-top-<thème>`, `hills-far-<thème>`…)
 public/assets/svg/        personnages et objets (SVG, style planche)
 public/                   PWA : manifest.webmanifest, sw.js (hors connexion), icônes (icon.svg → icon-*.png)
 docs/                     game design, style, roadmap, prototype HTML de référence
@@ -63,7 +69,7 @@ docs/                     game design, style, roadmap, prototype HTML de référ
 3. **Jamais frustrant.** Réapparition immédiate au dernier drapeau, potions qui réapparaissent, pas de vies limitées. Un piège doit être lisible avant de tuer (ombre, bruit, animation d'alerte).
 4. **Tablette d'abord.** Boutons tactiles ≥ 64 px, multi-touch (courir + sauter), pas de survol nécessaire, testé en paysage. Viser 60 i/s sur un iPad de quelques années : peu d'objets physiques, textures pré-rasterisées.
 5. **Style graphique** (docs/STYLE_GUIDE.md) : contour noir épais (6 px dans les SVG), aplats, palette fixe, polices Bangers (titres, onomatopées) et Patrick Hand (textes).
-6. **Données plutôt que code.** Un niveau = une carte ASCII + des listes ; une mort = une entrée dans `data/deaths.ts` + sa case de BD (une entrée dans `ARTS` de `ui/deathPanel.ts`, sinon case générique). Ajouter un piège = un caractère dans la légende + son comportement dans `LevelScene`.
+6. **Données plutôt que code.** Un niveau = une carte ASCII + des listes ; une mort = une entrée dans `data/deaths.ts` + sa case de BD (une entrée dans `ARTS` de `ui/deathPanel.ts`, sinon case générique). Ajouter un piège = un caractère dans la légende (`levels/types.ts`) + une classe `Hazard` (`objects/`) créée dans `LevelScene.buildEntities`.
 7. Textes du jeu et commentaires en **français**.
 
 ## Avant de dire qu'une tâche est finie
@@ -71,6 +77,11 @@ docs/                     game design, style, roadmap, prototype HTML de référ
 - `npm run build` passe (typecheck strict compris).
 - Tester dans le navigateur : le niveau se finit, chaque mort concernée se déclenche et apparaît dans l'album.
 - En mode dev, `window.game` est exposé : `game.scene.getScene('Level').hero.arcade.reset(x, y)` pour se téléporter.
+
+## Les 12 niveaux et les 31 morts
+
+Voir docs/GAME_DESIGN.md. Chaque monde se termine par un boss dans une arène fermée par des herses (`[` entrée, `]` sortie, chiffre `1`–`4` = le boss) ; le niveau 12 finit par la princesse et la mort n° 31, « le sauvetage raté ».
+Pour tester vite un niveau, dans la console (mode dev) : `game.scene.start('Level', { levelId: 9 })`, puis `game.scene.getScene('Level').hero.arcade.reset(x, y)`.
 
 ## Où en est-on
 

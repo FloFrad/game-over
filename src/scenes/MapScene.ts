@@ -30,9 +30,9 @@ export class MapScene extends Phaser.Scene {
   create(): void {
     const mode = (this.registry.get('mode') as Mode) ?? 'petit';
     this.cameras.main.setBackgroundColor(CSS.sky);
-    this.add.image(840, 96, 'sun');
-    this.add.tileSprite(0, 200, GAME_WIDTH, 300, 'hills-far').setOrigin(0);
-    this.add.tileSprite(0, 250, GAME_WIDTH, 300, 'hills-near').setOrigin(0);
+    this.add.image(840, 96, 'sun-forest');
+    this.add.tileSprite(0, 200, GAME_WIDTH, 300, 'hills-far-forest').setOrigin(0);
+    this.add.tileSprite(0, 250, GAME_WIDTH, 300, 'hills-near-forest').setOrigin(0);
 
     this.add
       .text(GAME_WIDTH / 2, 50, 'CARTE DU ROYAUME', { fontFamily: FONT_DISPLAY, fontSize: '54px', color: CSS.banana, stroke: CSS.ink, strokeThickness: 9 })
@@ -109,7 +109,7 @@ export class MapScene extends Phaser.Scene {
       if (state === 'locked') {
         // petit tremblement + « BIENTÔT ! » (pas de texte à lire pour comprendre : le cadenas parle)
         this.tweens.add({ targets: c, angle: { from: -8, to: 8 }, yoyo: true, repeat: 2, duration: 60, onComplete: () => c.setAngle(0) });
-        comicText(this, x, y, 'BIENTÔT !', { size: 30, color: '#FFFFFF' });
+        comicText(this, x, y, 'PAS ENCORE !', { size: 30, color: '#FFFFFF' });
         return;
       }
       sound.play('pop');

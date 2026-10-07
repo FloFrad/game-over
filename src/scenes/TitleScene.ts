@@ -23,7 +23,7 @@ export class TitleScene extends Phaser.Scene {
     panel.lineStyle(5, COLORS.ink, 1).strokeRoundedRect(100, 30, 760, 470, 12);
 
     this.add
-      .text(480, 72, 'NIVEAU 1 · LA FORÊT DES GLOUMPFS', { fontFamily: FONT_DISPLAY, fontSize: '22px', color: CSS.banana, backgroundColor: CSS.ink, padding: { x: 12, y: 3 } })
+      .text(480, 72, 'PERDRE, C\'EST GAGNER !', { fontFamily: FONT_DISPLAY, fontSize: '22px', color: CSS.banana, backgroundColor: CSS.ink, padding: { x: 12, y: 3 } })
       .setOrigin(0.5);
     this.add
       .text(480, 138, 'MESSIRE PAULOCHON', { fontFamily: FONT_DISPLAY, fontSize: '72px', color: CSS.banana, stroke: CSS.ink, strokeThickness: 10 })
@@ -45,7 +45,7 @@ export class TitleScene extends Phaser.Scene {
 
     const start = (mode: Mode) => {
       this.registry.set('mode', mode);
-      this.scene.start('Level', { fromCheckpoint: false });
+      this.scene.start('Map');
     };
     comicButton(this, 345, 352, MODES.petit.label, () => start('petit'), { width: 270, subtitle: MODES.petit.hint });
     comicButton(this, 615, 352, MODES.grand.label, () => start('grand'), { width: 270, subtitle: MODES.grand.hint, fill: COLORS.tomato, textColor: '#FFFFFF' });
@@ -59,6 +59,6 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.input.keyboard?.once('keydown-ENTER', () => start('petit'));
-    this.add.text(GAME_WIDTH - 8, GAME_HEIGHT - 6, 'v0.2', { fontFamily: FONT_BODY, fontSize: '14px', color: CSS.ink }).setOrigin(1, 1);
+    this.add.text(GAME_WIDTH - 8, GAME_HEIGHT - 6, 'v0.3', { fontFamily: FONT_BODY, fontSize: '14px', color: CSS.ink }).setOrigin(1, 1);
   }
 }

@@ -30,12 +30,14 @@ Comportement et réglages repris du prototype `docs/prototype/niveau-1-prototype
 
 À faire plus tard (idées) : la case pourrait s'animer (le héros qui glisse, l'enclume qui tombe) ; une case par défaut plus drôle pour les morts sans dessin.
 
-## v0.3 — Finitions iPad
+## v0.3 — Finitions iPad (code fait, reste le test sur l'appareil)
 
-- [ ] Test sur iPad réel (Safari) : taille des boutons, multi-touch, performances
-- [ ] PWA : manifeste + icône, jouable en plein écran depuis l'écran d'accueil, hors connexion
-- [ ] Message « tourne la tablette » en portrait
-- [ ] Sélection de niveau / carte du monde
+- [ ] **Test sur iPad réel (Safari)** : taille des boutons, multi-touch, performances, son. À faire à la main : `npm run dev` puis ouvrir `http://<ip-du-mac>:5173` sur l'iPad (même Wi-Fi), ou tester la version publiée.
+- [x] PWA : manifeste + icône (`public/manifest.webmanifest`, `icon-*.png`, `apple-touch-icon.png`), plein écran depuis l'écran d'accueil (Safari : Partager → Sur l'écran d'accueil), hors connexion grâce à `public/sw.js` (à ouvrir une première fois en ligne). Changer `VERSION` dans `sw.js` à chaque release.
+- [x] Message « tourne la tablette » en portrait (tablettes et téléphones seulement) ; le jeu se met en pause derrière
+- [x] Carte du royaume (4 mondes × 3 niveaux, cadenas pour les niveaux pas encore faits, étoile sur les niveaux terminés, progression sauvegardée) ; les boutons MENU/CARTE y ramènent
+
+Pour ajouter un niveau : sa carte dans `src/levels/`, l'inscrire dans `levels/index.ts` (le monde est déjà dans `data/worlds.ts`).
 
 ## v1.0 — 12 niveaux
 

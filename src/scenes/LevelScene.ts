@@ -7,6 +7,7 @@
 import Phaser from 'phaser';
 import { COLORS, CSS, FONT_DISPLAY, GAME_HEIGHT, GAME_WIDTH, MODES, SPRITE_RES, TILE, type Mode } from '../config';
 import { DEATH_BY_ID, type DeathId } from '../data/deaths';
+import { LEVELS } from '../levels';
 import { LEVEL_1 } from '../levels/level1';
 import { parseLevel, TILE_CRATE, TILE_EMPTY, TILE_GROUND, TILE_PLANK, type ParsedLevel } from '../levels/types';
 import { Anvil } from '../objects/Anvil';
@@ -15,6 +16,7 @@ import { Gloumpf } from '../objects/Gloumpf';
 import { Hero } from '../objects/Hero';
 import { album } from '../systems/album';
 import { Controls } from '../systems/Controls';
+import { progress } from '../systems/progress';
 import { sound } from '../systems/sound';
 import { Hud } from '../ui/Hud';
 import { SpeechBubble } from '../ui/speech';
@@ -101,7 +103,8 @@ export class LevelScene extends Phaser.Scene {
     return (this.registry.get('mode') as Mode) ?? 'petit';
   }
 
-  init(data: { fromCheckpoint?: boolean }): void {
+  init(data: { levelId?: number; fromCheckpoint?: boolean }): void {
+    if (data?.levelId !== undefined) this.registry.set('levelId', data.levelId);
     if (!data?.fromCheckpoint) {
       this.registry.set('checkpoint', 0);
       this.registry.set('hasSword', false);
@@ -125,7 +128,7 @@ export class LevelScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.level = parseLevel(LEVEL_1);
+    this.level = parseLevel(LEVELS[this.registry.get('levelId') ?? 1] ?? LEVEL_1);
     const worldW = this.level.cols * TILE;
     const settings = MODES[this.mode];
 
@@ -689,6 +692,7 @@ export class LevelScene extends Phaser.Scene {
     this.hero.hideAccessories();
     this.hud.update({ giant: null, fly: null, swordLeft: null });
     sound.play('win');
+    progress.complete(this.level.data.id);
     this.bubble?.setText('Encore toi ?!');
     this.bubble?.setVisible(true);
     comicText(this, this.hero.x, this.hero.y - 210, 'BRAVO !', { size: 60, life: 0 });

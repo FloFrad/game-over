@@ -13,7 +13,7 @@ npm run preview    # sert dist/ en local
 npm run typecheck
 ```
 
-Déploiement : push sur `main` → GitHub Actions (`.github/workflows/deploy.yml`) publie `dist/` sur GitHub Pages.
+Déploiement (le jeu s'installe aussi comme appli depuis Safari et marche hors connexion ; bumper `VERSION` dans `public/sw.js` à chaque release) : push sur `main` → GitHub Actions (`.github/workflows/deploy.yml`) publie `dist/` sur GitHub Pages.
 
 ## Stack
 
@@ -30,24 +30,29 @@ src/
   data/deaths.ts          catalogue des morts (id, n°, onomatopée, texte)
   levels/types.ts         format ASCII des niveaux + parseLevel() + légende des caractères
   levels/level1.ts        niveau 1 (12 × 112 cases)
+  levels/index.ts         registre des niveaux jouables (numéro → carte)
+  data/worlds.ts          les 4 mondes de la carte (3 niveaux chacun)
   objects/Hero.ts         héros : course, saut (coyote time, mémoire du saut, saut court), Géant, vol (Plume), glissade (banane), épée
   objects/Gloumpf.ts      monstre de base : patrouille, demi-tour au bord du vide
   objects/Anvil.ts        enclume : ombre + « ! » d'alerte, chute, pose
   objects/Bird.ts         oiseau affamé qui patrouille en haut pendant le vol
   scenes/BootScene.ts     charge les SVG (rasterisés à 2×, et à 3-4× pour les cases de BD), génère les textures, attend les polices
   scenes/TitleScene.ts    choix du mode, accès à l'album
+  scenes/MapScene.ts      carte du royaume : choix du niveau (cadenas, étoiles)
   scenes/LevelScene.ts    construction du niveau, collisions, objets, pièges, morts, victoire
   scenes/ResultScene.ts   mort : case de BD (grande, ~3 s) puis panneau GAME OVER + REJOUER ; victoire
   scenes/AlbumScene.ts    album des morts (par-dessus la scène qui l'ouvre ; `openAlbum(scene)`)
   scenes/PauseScene.ts    pause (Échap / P / bouton)
   systems/Controls.ts     clavier (flèches, WASD, ZQSD, Espace, X/E) + tactile unifiés
   systems/album.ts        album des morts (localStorage)
+  systems/progress.ts     niveaux terminés / débloqués (localStorage)
   systems/sound.ts        sons WebAudio synthétisés, bouton couper le son
   ui/deathPanel.ts        case de BD illustrée de chaque mort (`ARTS`), utilisée par ResultScene et AlbumScene
   ui/Hud.ts               titre, album, son, pause, barres de potion, compteur d'épée
   ui/                     onomatopées, bulles, boutons BD, boutons tactiles
   gfx/textures.ts         tuiles et décor dessinés au démarrage
 public/assets/svg/        personnages et objets (SVG, style planche)
+public/                   PWA : manifest.webmanifest, sw.js (hors connexion), icônes (icon.svg → icon-*.png)
 docs/                     game design, style, roadmap, prototype HTML de référence
 ```
 

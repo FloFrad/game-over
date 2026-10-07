@@ -17,7 +17,7 @@ export class PauseScene extends Phaser.Scene {
     };
     const menu = () => {
       this.scene.stop('Level');
-      this.scene.start('Title');
+      this.scene.start('Map');
     };
 
     this.add.rectangle(0, 0, this.scale.width, this.scale.height, COLORS.ink, 0.5).setOrigin(0);
@@ -34,7 +34,7 @@ export class PauseScene extends Phaser.Scene {
       .setShadow(5, 5, CSS.ink, 0, true, true);
     comicButton(this, cx, y + 180, 'REPRENDRE', resume, { width: 340, fontSize: 38 });
     comicButton(this, cx, y + 275, 'ALBUM', () => openAlbum(this), { width: 340, fill: 0xffffff });
-    comicButton(this, cx, y + 370, 'MENU', menu, { width: 340, fill: 0xffffff });
+    comicButton(this, cx, y + 370, 'CARTE', menu, { width: 340, fill: 0xffffff });
 
     this.input.keyboard?.on('keydown-ESC', resume);
     this.input.keyboard?.on('keydown-P', resume);

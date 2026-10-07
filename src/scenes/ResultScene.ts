@@ -6,6 +6,7 @@
 import Phaser from 'phaser';
 import { COLORS, CSS, FONT_BODY, FONT_DISPLAY, GAME_WIDTH } from '../config';
 import { DEATH_BY_ID, type DeathId } from '../data/deaths';
+import { LEVELS } from '../levels';
 import { album } from '../systems/album';
 import { sound } from '../systems/sound';
 import { comicButton } from '../ui/buttons';
@@ -136,7 +137,7 @@ export class ResultScene extends Phaser.Scene {
   private buttons(): void {
     this.pop(comicButton(this, 215, BTN_Y, 'REJOUER', this.retry, { width: 280 }).setDepth(5));
     this.pop(comicButton(this, 480, BTN_Y, 'ALBUM', () => openAlbum(this), { width: 220, fill: 0xffffff }).setDepth(5), 60);
-    this.pop(comicButton(this, 745, BTN_Y, 'MENU', () => { this.scene.stop('Level'); this.scene.start('Title'); }, { width: 220, fill: 0xffffff }).setDepth(5), 120);
+    this.pop(comicButton(this, 745, BTN_Y, 'CARTE', () => { this.scene.stop('Level'); this.scene.start('Map'); }, { width: 220, fill: 0xffffff }).setDepth(5), 120);
   }
 
   private showDeathResult(data: Extract<ResultData, { kind: 'death' }>, panel: Phaser.GameObjects.Container): void {
@@ -187,16 +188,18 @@ export class ResultScene extends Phaser.Scene {
   }
 
   private showWin(): void {
+    const levelId: number = this.registry.get('levelId') ?? 1;
+    const next = !!LEVELS[levelId + 1];
     this.pop(
       this.add
-        .text(CX, 112, 'NIVEAU 1 RÉUSSI !', { fontFamily: FONT_DISPLAY, fontSize: '74px', color: CSS.banana, stroke: CSS.ink, strokeThickness: 10 })
+        .text(CX, 112, `NIVEAU ${levelId} RÉUSSI !`, { fontFamily: FONT_DISPLAY, fontSize: '74px', color: CSS.banana, stroke: CSS.ink, strokeThickness: 10 })
         .setOrigin(0.5)
         .setShadow(5, 5, CSS.ink, 0, true, true)
         .setDepth(5),
     );
     this.add.image(CX - 190, 250, 'princess').setScale(0.6).setDepth(5);
     this.add
-      .text(CX + 50, 240, '« Encore toi ?! Bon… le niveau 2,\nc\'est par là. »', { fontFamily: FONT_BODY, fontSize: '26px', color: CSS.ink, backgroundColor: '#FFFFFF', padding: { x: 16, y: 10 } })
+      .text(CX + 50, 240, next ? `« Encore toi ?! Bon… le niveau ${levelId + 1},\nc'est par là. »` : '« Encore toi ?! Bon… la suite,\nc\'est pour bientôt ! »', { fontFamily: FONT_BODY, fontSize: '26px', color: CSS.ink, backgroundColor: '#FFFFFF', padding: { x: 16, y: 10 } })
       .setOrigin(0.5)
       .setDepth(5);
     const found = album.size < album.total

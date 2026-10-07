@@ -23,6 +23,7 @@ En mode dev, `window.game` est exposé dans la console, par exemple `game.scene.
 - **Ordinateur** : ← → (ou Q / D) pour marcher, Espace pour sauter, X pour taper (épée, poêle ou boomerang).
 - **iPad** : boutons à l'écran ◀ ▶, SAUT, TAPER.
 - Échap ou P : pause.
+- **Cheat code** : dans l'album des morts, taper `EFFACE` au clavier active le mode effacement (les cases rougissent et tremblent) ; toucher une case la remet à « ? ». Retaper `EFFACE` (ou fermer l'album) pour sortir.
 - Deux modes : **Petit chevalier** (~5 ans : plus lent, boss à 2 cœurs) et **Grand chevalier** (~10 ans).
 
 ## Mettre en ligne (GitHub Pages)

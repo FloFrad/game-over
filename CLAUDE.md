@@ -47,7 +47,7 @@ src/
   scenes/MapScene.ts      carte du royaume : choix du niveau (cadenas, étoiles)
   scenes/LevelScene.ts    construction du niveau, collisions, objets, pièges, boss et arènes, morts, victoire, finale du niveau 12
   scenes/ResultScene.ts   mort : case de BD (grande, ~3 s) puis panneau GAME OVER + REJOUER ; victoire
-  scenes/AlbumScene.ts    album des morts, 8 cases par page, flèches ◀ ▶ (par-dessus la scène qui l'ouvre ; `openAlbum(scene)`)
+  scenes/AlbumScene.ts    album des morts, 8 cases par page, flèches ◀ ▶, cheat code `EFFACE` pour effacer une mort (par-dessus la scène qui l'ouvre ; `openAlbum(scene)`)
   scenes/PauseScene.ts    pause (Échap / P / bouton)
   systems/Controls.ts     clavier (flèches, WASD, ZQSD, Espace, X/E) + tactile unifiés
   systems/album.ts        album des morts (localStorage)

@@ -13,9 +13,9 @@ export class TitleScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor(CSS.sky);
-    this.add.image(840, 96, 'sun');
-    this.add.tileSprite(0, 200, GAME_WIDTH, 300, 'hills-far').setOrigin(0);
-    this.add.tileSprite(0, 250, GAME_WIDTH, 300, 'hills-near').setOrigin(0);
+    this.add.image(840, 96, 'sun-forest');
+    this.add.tileSprite(0, 200, GAME_WIDTH, 300, 'hills-far-forest').setOrigin(0);
+    this.add.tileSprite(0, 250, GAME_WIDTH, 300, 'hills-near-forest').setOrigin(0);
 
     const panel = this.add.graphics();
     panel.fillStyle(COLORS.ink, 1).fillRoundedRect(110, 40, 760, 470, 12);
@@ -59,6 +59,6 @@ export class TitleScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.input.keyboard?.once('keydown-ENTER', () => start('petit'));
-    this.add.text(GAME_WIDTH - 8, GAME_HEIGHT - 6, 'v0.3', { fontFamily: FONT_BODY, fontSize: '14px', color: CSS.ink }).setOrigin(1, 1);
+    this.add.text(GAME_WIDTH - 8, GAME_HEIGHT - 6, 'v1.0', { fontFamily: FONT_BODY, fontSize: '14px', color: CSS.ink }).setOrigin(1, 1);
   }
 }

@@ -4,9 +4,11 @@
 //  - le reste : cache d'abord, rafraîchi en arrière-plan (les scripts du build ont un nom unique).
 // Changer VERSION à chaque release : les anciens caches sont supprimés.
 
-const VERSION = 'paulochon-v0.3';
+const VERSION = 'paulochon-v1.0';
 const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
-const SPRITES = ['hero', 'princess', 'gloumpf', 'ronchon-sleeping', 'potion-giant', 'potion-plume', 'sword', 'ghost', 'anvil', 'banana-peel', 'bird', 'skull'];
+const SPRITES = [
+  'anvil', 'armor', 'banana-peel', 'bee', 'beehive', 'bird', 'boomerang', 'chest', 'club', 'door', 'door-mouth', 'dragon', 'frog', 'ghost', 'gloumpf', 'hero', 'mimic', 'mosquito', 'mushroom', 'mushroom-wild', 'pan', 'potion-ghost', 'potion-giant', 'potion-minus', 'potion-plume', 'princess', 'ronchon-awake', 'ronchon-sleeping', 'skull', 'snail', 'snowman', 'stalactite', 'sword'
+];
 const STATIC = ['./', 'manifest.webmanifest', 'icon-192.png', 'icon-512.png', 'apple-touch-icon.png', ...SPRITES.map((s) => `assets/svg/${s}.svg`)];
 
 self.addEventListener('install', (event) => {

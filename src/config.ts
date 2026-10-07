@@ -63,12 +63,23 @@ export interface ModeSettings {
   anvilWarn: number;
   giantDuration: number;
   flyDuration: number;
+  tinyDuration: number;
+  ghostDuration: number;
+  /** Vitesse et cadence des ennemis des mondes 2 à 4 (1 = « Grand chevalier »). */
+  foe: number;
+  /** Points de vie des boss. */
+  bossHp: number;
+  /** Sables mouvants : vitesse d'enfoncement (px/s) et force d'un coup de saut pour se dégager. */
+  sinkSpeed: number;
+  swimImpulse: number;
+  /** Le boomerang qui revient : le « Petit chevalier » l'attrape toujours. */
+  autoCatch: boolean;
 }
 
 /** « Petit chevalier » pour ~5 ans, « Grand chevalier » pour ~10 ans. */
 export const MODES: Record<Mode, ModeSettings> = {
-  petit: { label: 'PETIT CHEVALIER', hint: 'plus lent, plus facile', heroSpeed: 230, gloumpfSpeed: 45, anvilWarn: 1.5, giantDuration: 13, flyDuration: 10 },
-  grand: { label: 'GRAND CHEVALIER', hint: 'plus rapide, plus vicieux', heroSpeed: 265, gloumpfSpeed: 85, anvilWarn: 0.85, giantDuration: 9, flyDuration: 7 },
+  petit: { label: 'PETIT CHEVALIER', hint: 'plus lent, plus facile', heroSpeed: 230, gloumpfSpeed: 45, anvilWarn: 1.5, giantDuration: 13, flyDuration: 10, tinyDuration: 10, ghostDuration: 11, foe: 0.7, bossHp: 3, sinkSpeed: 24, swimImpulse: 520, autoCatch: true },
+  grand: { label: 'GRAND CHEVALIER', hint: 'plus rapide, plus vicieux', heroSpeed: 265, gloumpfSpeed: 85, anvilWarn: 0.85, giantDuration: 9, flyDuration: 7, tinyDuration: 8, ghostDuration: 8, foe: 1, bossHp: 4, sinkSpeed: 52, swimImpulse: 430, autoCatch: false },
 };
 
 /**
@@ -76,18 +87,43 @@ export const MODES: Record<Mode, ModeSettings> = {
  * Les SVG sont rasterisés à 2× pour rester nets sur iPad / Retina, puis affichés à l'échelle 0.5.
  */
 export const SPRITES = {
-  hero: { file: 'hero', h: 66 },
-  princess: { file: 'princess', h: 82 },
-  gloumpf: { file: 'gloumpf', h: 49 },
-  ronchon: { file: 'ronchon-sleeping', h: 200 },
-  potionGiant: { file: 'potion-giant', h: 44 },
-  potionPlume: { file: 'potion-plume', h: 44 },
-  sword: { file: 'sword', h: 44 },
-  ghost: { file: 'ghost', h: 78 },
-  anvil: { file: 'anvil', h: 56 },
-  peel: { file: 'banana-peel', h: 28 },
-  bird: { file: 'bird', h: 58 },
-  skull: { file: 'skull', h: 60 },
+  hero: { file: 'hero', h: 66, r: 274 / 330 },
+  princess: { file: 'princess', h: 82, r: 268 / 338 },
+  gloumpf: { file: 'gloumpf', h: 49, r: 176 / 184 },
+  ronchon: { file: 'ronchon-sleeping', h: 200, r: 410 / 258 },
+  potionGiant: { file: 'potion-giant', h: 44, r: 140 / 150 },
+  potionPlume: { file: 'potion-plume', h: 44, r: 140 / 150 },
+  sword: { file: 'sword', h: 44, r: 60 / 184 },
+  ghost: { file: 'ghost', h: 78, r: 180 / 182 },
+  anvil: { file: 'anvil', h: 56, r: 306 / 144 },
+  peel: { file: 'banana-peel', h: 28, r: 80 / 50 },
+  bird: { file: 'bird', h: 58, r: 132 / 84 },
+  skull: { file: 'skull', h: 60, r: 120 / 130 },
+  // Monde 1 : forêt
+  beehive: { file: 'beehive', h: 62, r: 90 / 110 },
+  bee: { file: 'bee', h: 22, r: 64 / 48 },
+  mushroom: { file: 'mushroom', h: 38, r: 80 / 72 },
+  mushroomWild: { file: 'mushroom-wild', h: 76, r: 120 / 110 },
+  // Monde 2 : marais
+  frog: { file: 'frog', h: 44, r: 130 / 96 },
+  snail: { file: 'snail', h: 36, r: 104 / 84 },
+  mosquito: { file: 'mosquito', h: 34, r: 112 / 84 },
+  potionMinus: { file: 'potion-minus', h: 44, r: 140 / 150 },
+  potionGhost: { file: 'potion-ghost', h: 44, r: 140 / 150 },
+  // Monde 3 : château glacé
+  snowman: { file: 'snowman', h: 68, r: 110 / 150 },
+  armor: { file: 'armor', h: 86, r: 110 / 184 },
+  stalactite: { file: 'stalactite', h: 62, r: 64 / 104 },
+  pan: { file: 'pan', h: 40, r: 130 / 60 },
+  door: { file: 'door', h: 100, r: 90 / 124 },
+  doorMouth: { file: 'door-mouth', h: 100, r: 90 / 124 },
+  // Monde 4 : volcan
+  dragon: { file: 'dragon', h: 70, r: 150 / 124 },
+  chest: { file: 'chest', h: 42, r: 104 / 84 },
+  mimic: { file: 'mimic', h: 60, r: 124 / 112 },
+  boomerang: { file: 'boomerang', h: 30, r: 92 / 70 },
+  ronchonAwake: { file: 'ronchon-awake', h: 200, r: 410 / 258 },
+  club: { file: 'club', h: 150, r: 100 / 240 },
 } as const;
 
 export type SpriteKey = keyof typeof SPRITES;
@@ -97,5 +133,10 @@ export const SPRITE_RES = 2;
  * Versions « grande case » des sprites, pour les vignettes de BD (src/ui/deathPanel.ts) :
  * rasterisées plus finement (facteur ×N) sous la clé `${nom}Big`, pour rester nettes quand on agrandit.
  */
-export const BIG_SPRITES = { hero: 4, gloumpf: 4, anvil: 4, bird: 4, ghost: 4, peel: 4, skull: 4, ronchon: 3 } as const;
+export const BIG_SPRITES = {
+  hero: 4, gloumpf: 4, anvil: 4, bird: 4, ghost: 4, peel: 4, skull: 4, ronchon: 3,
+  beehive: 4, bee: 4, mushroom: 4, mushroomWild: 3, frog: 4, snail: 4, mosquito: 4,
+  snowman: 4, armor: 3, stalactite: 4, pan: 4, door: 3, doorMouth: 3,
+  dragon: 4, chest: 4, mimic: 4, boomerang: 4, ronchonAwake: 3, club: 3, princess: 4,
+} as const;
 export type BigSpriteKey = keyof typeof BIG_SPRITES;

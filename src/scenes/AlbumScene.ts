@@ -13,6 +13,9 @@ const CARD_H = 152;
 const GAP_X = 16;
 const GAP_Y = 14;
 const GRID_TOP = 124;
+const PER_PAGE = 8;
+/** Page ouverte (gardée d'une ouverture à l'autre). */
+let page = 0;
 
 /** Ouvre l'album par-dessus `from` (qui est mise en pause et reprend à la fermeture). */
 export function openAlbum(from: Phaser.Scene): void {
@@ -46,15 +49,14 @@ export class AlbumScene extends Phaser.Scene {
       .text(GAME_WIDTH / 2, 102, `${album.size} / ${album.total} morts découvertes`, { fontFamily: FONT_BODY, fontSize: '22px', color: CSS.muted })
       .setOrigin(0.5);
 
-    // Grille : 4 colonnes (6 s'il y a beaucoup de morts, les cartes rétrécissent)
-    const cols = DEATHS.length <= 8 ? 4 : 6;
-    const k = cols === 4 ? 1 : (840 - (cols - 1) * GAP_X) / cols / CARD_W;
-    const gridW = cols * CARD_W * k + (cols - 1) * GAP_X;
-    const left = (GAME_WIDTH - gridW) / 2;
-    DEATHS.forEach((d, i) => {
-      const cx = left + (CARD_W * k) / 2 + (i % cols) * (CARD_W * k + GAP_X);
-      const cy = GRID_TOP + (CARD_H * k) / 2 + Math.floor(i / cols) * (CARD_H * k + GAP_Y);
-      const card = this.add.container(cx, cy).setScale(k);
+    // Grille : 4 colonnes × 2 rangées par page, une page par groupe de morts (flèches ◀ ▶)
+    const pages = Math.ceil(DEATHS.length / PER_PAGE);
+    page = Math.min(page, pages - 1);
+    const left = (GAME_WIDTH - (4 * CARD_W + 3 * GAP_X)) / 2;
+    DEATHS.slice(page * PER_PAGE, (page + 1) * PER_PAGE).forEach((d, i) => {
+      const cx = left + CARD_W / 2 + (i % 4) * (CARD_W + GAP_X);
+      const cy = GRID_TOP + CARD_H / 2 + Math.floor(i / 4) * (CARD_H + GAP_Y);
+      const card = this.add.container(cx, cy);
       const open = album.has(d.id);
 
       const bg = this.add.graphics();
@@ -72,12 +74,27 @@ export class AlbumScene extends Phaser.Scene {
       }
       card.add(
         this.add
-          .text(0, 56, open ? d.name : 'Mort secrète', { fontFamily: FONT_BODY, fontSize: '18px', color: open ? CSS.ink : CSS.muted })
+          .text(0, 56, open ? d.name : 'Mort secrète', { fontFamily: FONT_BODY, fontSize: open && d.name.length > 24 ? '15px' : '18px', color: open ? CSS.ink : CSS.muted })
           .setOrigin(0.5),
       );
     });
 
-    comicButton(this, GAME_WIDTH / 2, 488, 'FERMER', close, { width: 260 });
+    // Changer de page (grosses flèches : tactile)
+    const go = (delta: number) => {
+      page = (page + delta + pages) % pages;
+      this.scene.restart(data);
+    };
+    if (pages > 1) {
+      comicButton(this, 150, 488, '◀', () => go(-1), { width: 120, height: 64, fill: 0xffffff, fontSize: 34 });
+      comicButton(this, GAME_WIDTH - 150, 488, '▶', () => go(1), { width: 120, height: 64, fill: 0xffffff, fontSize: 34 });
+      this.add
+        .text(GAME_WIDTH / 2 + 190, 488, `page ${page + 1} / ${pages}`, { fontFamily: FONT_BODY, fontSize: '20px', color: CSS.muted })
+        .setOrigin(0.5);
+      this.input.keyboard?.on('keydown-LEFT', () => go(-1));
+      this.input.keyboard?.on('keydown-RIGHT', () => go(1));
+    }
+
+    comicButton(this, GAME_WIDTH / 2 - 40, 488, 'FERMER', close, { width: 260 });
     this.input.keyboard?.on('keydown-ESC', close);
     this.input.keyboard?.on('keydown-ENTER', close);
   }

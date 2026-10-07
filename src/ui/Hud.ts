@@ -14,6 +14,10 @@ export interface HudState {
   /** Fraction de durée restante (0–1), ou null si la potion n'est pas active. */
   giant: number | null;
   fly: number | null;
+  tiny: number | null;
+  ghost: number | null;
+  /** Outil en main (une icône), ou null. */
+  tool: 'sword' | 'pan' | 'boomerang' | null;
   /** Coups d'épée restants (0–4), ou null si le héros n'a pas d'épée. */
   swordLeft: number | null;
 }
@@ -33,8 +37,8 @@ function chipBackground(g: Phaser.GameObjects.Graphics, x: number, y: number, w:
 
 export class Hud {
   private bars: Phaser.GameObjects.Graphics;
-  private icons: Record<'giant' | 'fly' | 'sword', Phaser.GameObjects.Image>;
-  private labels: Record<'giant' | 'fly', Phaser.GameObjects.Text>;
+  private icons: Record<'giant' | 'fly' | 'tiny' | 'ghost' | 'sword' | 'pan' | 'boomerang', Phaser.GameObjects.Image>;
+  private labels: Record<'giant' | 'fly' | 'tiny' | 'ghost', Phaser.GameObjects.Text>;
   private swordBox: Phaser.GameObjects.Graphics;
   private albumText: Phaser.GameObjects.Text;
   private soundIcon: Phaser.GameObjects.Graphics;
@@ -87,10 +91,14 @@ export class Hud {
     this.icons = {
       giant: fixed(scene.add.image(0, 0, 'potionGiant').setScale(S * (40 / 44)), DEPTH + 1).setVisible(false),
       fly: fixed(scene.add.image(0, 0, 'potionPlume').setScale(S * (40 / 44)), DEPTH + 1).setVisible(false),
+      tiny: fixed(scene.add.image(0, 0, 'potionMinus').setScale(S * (40 / 44)), DEPTH + 1).setVisible(false),
+      ghost: fixed(scene.add.image(0, 0, 'potionGhost').setScale(S * (40 / 44)), DEPTH + 1).setVisible(false),
       sword: fixed(scene.add.image(36, 104, 'sword').setScale(S * (36 / 44)).setAngle(46), DEPTH + 1).setVisible(false),
+      pan: fixed(scene.add.image(40, 104, 'pan').setScale(S * 0.42).setAngle(-30), DEPTH + 1).setVisible(false),
+      boomerang: fixed(scene.add.image(40, 104, 'boomerang').setScale(S * 0.75), DEPTH + 1).setVisible(false),
     };
     const label = (text: string) => fixed(scene.add.text(0, 0, text, { fontFamily: FONT_DISPLAY, fontSize: '20px', color: CSS.ink }), DEPTH + 1).setOrigin(0, 0.5).setVisible(false);
-    this.labels = { giant: label('GÉANT'), fly: label('PLUME') };
+    this.labels = { giant: label('GÉANT'), fly: label('PLUME'), tiny: label('MINUS'), ghost: label('FANTÔME') };
   }
 
   /** Zone cliquable invisible, au-dessus du bouton dessiné. */
@@ -139,7 +147,7 @@ export class Hud {
     g.clear();
 
     let y = 84;
-    const bar = (kind: 'giant' | 'fly', frac: number | null, color: number) => {
+    const bar = (kind: 'giant' | 'fly' | 'tiny' | 'ghost', frac: number | null, color: number) => {
       const on = frac !== null;
       this.icons[kind].setVisible(on);
       this.labels[kind].setVisible(on);
@@ -155,10 +163,15 @@ export class Hud {
     };
     bar('giant', s.giant, COLORS.tomato);
     bar('fly', s.fly, COLORS.banana);
+    bar('tiny', s.tiny, 0x3e7dd8);
+    bar('ghost', s.ghost, 0xb9c4d6);
 
-    const hasSword = s.swordLeft !== null;
-    this.swordBox.setVisible(hasSword);
-    this.icons.sword.setVisible(hasSword);
-    if (hasSword) this.drawSwordDots(4 - (s.swordLeft ?? 0));
+    // Outil en main : icône dans un cadre (l'épée montre en plus ses coups restants)
+    const hasTool = s.tool !== null;
+    this.swordBox.setVisible(hasTool);
+    this.icons.sword.setVisible(s.tool === 'sword');
+    this.icons.pan.setVisible(s.tool === 'pan');
+    this.icons.boomerang.setVisible(s.tool === 'boomerang');
+    if (s.tool === 'sword') this.drawSwordDots(4 - (s.swordLeft ?? 0));
   }
 }

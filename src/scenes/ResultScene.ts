@@ -134,10 +134,25 @@ export class ResultScene extends Phaser.Scene {
     return o;
   }
 
-  private buttons(): void {
-    this.pop(comicButton(this, 215, BTN_Y, 'REJOUER', this.retry, { width: 280 }).setDepth(5));
-    this.pop(comicButton(this, 480, BTN_Y, 'ALBUM', () => openAlbum(this), { width: 220, fill: 0xffffff }).setDepth(5), 60);
-    this.pop(comicButton(this, 745, BTN_Y, 'CARTE', () => { this.scene.stop('Level'); this.scene.start('Map'); }, { width: 220, fill: 0xffffff }).setDepth(5), 120);
+  private buttons(opts: { next?: number; replay?: boolean } = {}): void {
+    const map = () => {
+      this.scene.stop('Level');
+      this.scene.start('Map');
+    };
+    const list: [string, () => void, { width: number; fill?: number }][] = [];
+    if (opts.next) {
+      const id = opts.next;
+      list.push([`NIVEAU ${id}`, () => { this.scene.stop('Level'); this.scene.start('Level', { levelId: id, fromCheckpoint: false }); }, { width: 250 }]);
+    }
+    if (opts.replay !== false) list.push(['REJOUER', this.retry, opts.next ? { width: 200, fill: 0xffffff } : { width: 280 }]);
+    list.push(['ALBUM', () => openAlbum(this), { width: 200, fill: 0xffffff }]);
+    list.push(['CARTE', map, { width: 200, fill: 0xffffff }]);
+    const total = list.reduce((n, [, , o]) => n + o.width + 16, -16);
+    let x = (GAME_WIDTH - total) / 2;
+    list.forEach(([label, fn, o], i) => {
+      this.pop(comicButton(this, x + o.width / 2, BTN_Y, label, fn, o).setDepth(5), i * 60);
+      x += o.width + 16;
+    });
   }
 
   private showDeathResult(data: Extract<ResultData, { kind: 'death' }>, panel: Phaser.GameObjects.Container): void {
@@ -164,8 +179,9 @@ export class ResultScene extends Phaser.Scene {
         })
         .setOrigin(0.5)
         .setDepth(5);
+      const finale = data.deathId === 'sauvetage';
       const go = this.add
-        .text(CX, 130, 'GAME OVER', { fontFamily: FONT_DISPLAY, fontSize: '92px', color: CSS.tomato, stroke: CSS.ink, strokeThickness: 11 })
+        .text(CX, 130, finale ? 'FIN !' : 'GAME OVER', { fontFamily: FONT_DISPLAY, fontSize: '92px', color: finale ? CSS.banana : CSS.tomato, stroke: CSS.ink, strokeThickness: 11 })
         .setOrigin(0.5)
         .setShadow(7, 7, CSS.banana, 0, false, true)
         .setDepth(5);
@@ -176,14 +192,14 @@ export class ResultScene extends Phaser.Scene {
         .setOrigin(0.5)
         .setDepth(5);
       this.add
-        .text(col, 322, d.txt, { fontFamily: FONT_BODY, fontSize: '23px', color: CSS.ink, align: 'center', wordWrap: { width: 420 } })
+        .text(col, 322, finale ? 'Messire Paulochon a sauvé la princesse… ou presque. Merci d’avoir joué !' : d.txt, { fontFamily: FONT_BODY, fontSize: '23px', color: CSS.ink, align: 'center', wordWrap: { width: 420 } })
         .setOrigin(0.5)
         .setDepth(5);
       this.add
         .text(col, 384, `Album des morts : ${album.size} / ${album.total}`, { fontFamily: FONT_BODY, fontSize: '20px', color: CSS.muted })
         .setOrigin(0.5)
         .setDepth(5);
-      this.buttons();
+      this.buttons({ replay: !finale });
     };
   }
 
@@ -206,6 +222,6 @@ export class ResultScene extends Phaser.Scene {
       ? `Tu as découvert ${album.size} morts sur ${album.total}. Il en reste de cachées !`
       : `Album complet : les ${album.total} morts ! Bravo, chevalier.`;
     this.add.text(CX, 350, found, { fontFamily: FONT_BODY, fontSize: '24px', color: CSS.ink }).setOrigin(0.5).setDepth(5);
-    this.buttons();
+    this.buttons({ next: next ? levelId + 1 : undefined });
   }
 }

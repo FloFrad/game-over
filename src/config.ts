@@ -69,6 +69,10 @@ export interface ModeSettings {
   foe: number;
   /** Points de vie des boss. */
   bossHp: number;
+  /** Boss : 1 = normal, plus petit = plus lent, alertes plus longues, boss sonné plus longtemps. */
+  bossCalm: number;
+  /** Pause de l'oiseau hors de l'écran entre deux passages (s). */
+  birdPause: number;
   /** Sables mouvants : vitesse d'enfoncement (px/s) et force d'un coup de saut pour se dégager. */
   sinkSpeed: number;
   swimImpulse: number;
@@ -78,8 +82,8 @@ export interface ModeSettings {
 
 /** « Petit chevalier » pour ~5 ans, « Grand chevalier » pour ~10 ans. */
 export const MODES: Record<Mode, ModeSettings> = {
-  petit: { label: 'PETIT CHEVALIER', hint: 'plus lent, plus facile', heroSpeed: 230, gloumpfSpeed: 45, anvilWarn: 1.5, giantDuration: 13, flyDuration: 10, tinyDuration: 10, ghostDuration: 11, foe: 0.7, bossHp: 3, sinkSpeed: 24, swimImpulse: 520, autoCatch: true },
-  grand: { label: 'GRAND CHEVALIER', hint: 'plus rapide, plus vicieux', heroSpeed: 265, gloumpfSpeed: 85, anvilWarn: 0.85, giantDuration: 9, flyDuration: 7, tinyDuration: 8, ghostDuration: 8, foe: 1, bossHp: 4, sinkSpeed: 52, swimImpulse: 430, autoCatch: false },
+  petit: { label: 'PETIT CHEVALIER', hint: 'plus lent, plus facile', heroSpeed: 230, gloumpfSpeed: 45, anvilWarn: 1.5, giantDuration: 13, flyDuration: 10, tinyDuration: 10, ghostDuration: 11, foe: 0.7, bossHp: 2, bossCalm: 0.5, birdPause: 8, sinkSpeed: 24, swimImpulse: 520, autoCatch: true },
+  grand: { label: 'GRAND CHEVALIER', hint: 'plus rapide, plus vicieux', heroSpeed: 265, gloumpfSpeed: 85, anvilWarn: 0.85, giantDuration: 9, flyDuration: 7, tinyDuration: 8, ghostDuration: 8, foe: 1, bossHp: 4, bossCalm: 1, birdPause: 4, sinkSpeed: 52, swimImpulse: 430, autoCatch: false },
 };
 
 /**

@@ -16,7 +16,7 @@ const GRID_TOP = 124;
 const PER_PAGE = 8;
 /** Page ouverte (gardée d'une ouverture à l'autre). */
 let page = 0;
-/** Cheat code : taper EFFACE dans l'album, puis toucher une case pour la remettre à « ? ». */
+/** Cheat code : taper EFFACE (ou toucher 5 fois le titre) dans l'album, puis toucher une case pour la remettre à « ? ». */
 const CHEAT = 'EFFACE';
 let eraseMode = false;
 
@@ -45,15 +45,25 @@ export class AlbumScene extends Phaser.Scene {
     g.fillStyle(COLORS.paper, 1).fillRoundedRect(x, y, w, h, 12);
     g.lineStyle(5, COLORS.ink, 1).strokeRoundedRect(x, y, w, h, 12);
 
-    this.add
+    const title = this.add
       .text(GAME_WIDTH / 2, 58, 'ALBUM DES MORTS', { fontFamily: FONT_DISPLAY, fontSize: '50px', color: CSS.banana, stroke: CSS.ink, strokeThickness: 8 })
       .setOrigin(0.5)
       .setShadow(4, 4, CSS.ink, 0, true, true);
+    // Cheat code tactile : toucher 5 fois le titre (en 3 s) active / désactive le mode effacement
+    let taps: number[] = [];
+    title.setInteractive({ useHandCursor: false }).on('pointerup', () => {
+      const now = this.time.now;
+      taps = [...taps.filter((t) => now - t < 3000), now];
+      if (taps.length >= 5) {
+        eraseMode = !eraseMode;
+        this.scene.restart(data);
+      }
+    });
     this.add
       .text(
         GAME_WIDTH / 2,
         102,
-        eraseMode ? 'EFFACEMENT : touche une case (retape EFFACE pour quitter)' : `${album.size} / ${album.total} morts découvertes`,
+        eraseMode ? 'EFFACEMENT : touche une case (retape EFFACE ou touche 5 fois le titre pour quitter)' : `${album.size} / ${album.total} morts découvertes`,
         eraseMode
           ? { fontFamily: FONT_BODY, fontSize: '20px', color: '#FFFFFF', backgroundColor: CSS.tomato, padding: { x: 10, y: 2 } }
           : { fontFamily: FONT_BODY, fontSize: '22px', color: CSS.muted },

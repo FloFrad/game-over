@@ -198,7 +198,7 @@ export class LevelScene extends Phaser.Scene {
     this.buildLiquids();
     this.gates = this.physics.add.staticGroup();
     this.buildEntities();
-    this.bird = new Bird(this);
+    this.bird = new Bird(this, settings.birdPause);
 
     // Héros au dernier drapeau atteint
     const cpIndex = Math.min(this.registry.get('checkpoint') ?? 0, this.checkpoints.length - 1);
@@ -277,7 +277,11 @@ export class LevelScene extends Phaser.Scene {
 
     // Chutes : la cause dépend de ce qu'on faisait juste avant (banane, pont, nénuphar, glace…)
     if (hero.y > GAME_HEIGHT + 120) return this.die(this.fallDeath(t));
-    if (hero.flyTime > 0 && body.top < 62) return this.die('oiseau');
+    if (hero.flyTime > 0 && body.top < 62) {
+      // En haut de l'écran : l'oiseau n'attrape que s'il est tout près ; sinon le plafond arrête simplement le héros
+      if (this.bird.threatens(hero.x)) return this.die('oiseau');
+      if (body.velocity.y < 0) body.setVelocityY(0);
+    }
     if (hero.isGiant) {
       this.smashCratesAround();
       if ((body.blocked.up || body.touching.up) && this.ceilingAbove()) return this.die('bonk');

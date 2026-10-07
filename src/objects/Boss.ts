@@ -121,7 +121,7 @@ export class Boss implements Hazard, Target {
   private damage(c: Ctx): void {
     this.hp--;
     c.sfx('stomp');
-    this.timer = 1.6;
+    this.timer = c.mode.bossCalm < 1 ? 2.8 : 1.6;
     this.state = this.hp <= 0 ? 'dead' : 'stun';
     this.bang.setVisible(false);
     this.shadow.setVisible(false);
@@ -169,7 +169,7 @@ export class Boss implements Hazard, Target {
     const dx = hb.center.x - this.x;
     this.timer -= dt;
     if (this.grace > 0) this.grace -= dt;
-    if (this.state === 'stun') this.grace = 0.9;
+    if (this.state === 'stun') this.grace = c.mode.bossCalm < 1 ? 1.6 : 0.9;
     if (this.state !== 'stun' && this.state !== 'jump') {
       this.dir = dx >= 0 ? 1 : -1;
     }
@@ -222,7 +222,7 @@ export class Boss implements Hazard, Target {
 
   // ---- 1. Maman Gloumpf : marche, puis crache de la gelée en cloche
   private stepMama(dt: number, c: Ctx): void {
-    const f = c.mode.foe;
+    const f = c.mode.foe * c.mode.bossCalm;
     this.setScaleXY(1 - Math.sin(c.t * 8) * 0.03, 1 + Math.sin(c.t * 8) * 0.03);
     if (this.state === 'stun') {
       this.setScaleXY(1.3, 0.55);
@@ -245,7 +245,7 @@ export class Boss implements Hazard, Target {
       if (this.timer <= 0) {
         this.showBang(c, false);
         this.state = 'walk';
-        this.timer = 3.2 / f;
+        this.timer = 3.2 / Math.max(f, 0.6);
         c.sfx('slurp');
         const hx = c.hero.arcade.center.x;
         for (const off of [-110, 0, 110]) {
@@ -260,7 +260,7 @@ export class Boss implements Hazard, Target {
 
   // ---- 2. Crapouille : repos, accroupi (ombre au sol), grand bond
   private stepToad(dt: number, c: Ctx): void {
-    const f = c.mode.foe;
+    const f = c.mode.foe * c.mode.bossCalm;
     if (this.state === 'stun') {
       this.setScaleXY(1.25, 0.6);
       this.img.setAngle(Math.sin(c.t * 30) * 4);
@@ -316,7 +316,7 @@ export class Boss implements Hazard, Target {
 
   // ---- 3. Gros Floc : éternue des boules de neige (basses, puis hautes), à renvoyer à la poêle
   private stepFloc(dt: number, c: Ctx): void {
-    const f = c.mode.foe;
+    const f = c.mode.foe * c.mode.bossCalm;
     for (const q of this.queued) q.at -= dt;
     const due = this.queued.filter((q) => q.at <= 0);
     this.queued = this.queued.filter((q) => q.at > 0);
@@ -346,7 +346,7 @@ export class Boss implements Hazard, Target {
       if (this.timer <= 0) {
         this.showBang(c, false);
         this.state = 'rest';
-        this.timer = 2.4 / f;
+        this.timer = 2.4 / Math.max(f, 0.6);
         this.setScaleXY(1, 1);
         const high = this.shotNo++ % 2 === 1;
         this.fire(c, high);
@@ -359,7 +359,7 @@ export class Boss implements Hazard, Target {
   private fire(c: Ctx, high: boolean): void {
     c.sfx('sneeze');
     c.say(this.x, this.y - this.spec.h - 30, 'ATCHOUM !', { size: 40, color: '#FFFFFF' });
-    const f = c.mode.foe;
+    const f = c.mode.foe * c.mode.bossCalm;
     c.projectiles.push(
       new Projectile(c.scene, 'snowball', this.x - 70, this.y - (high ? 112 : 24), -245 * f, 'floc', { reflectable: true, r: 16 }),
     );
@@ -367,7 +367,7 @@ export class Boss implements Hazard, Target {
 
   // ---- 4. Ronchon : avance, lève la massue (alerte), frappe le sol : deux vagues de cailloux
   private stepRonchon(dt: number, c: Ctx): void {
-    const f = c.mode.foe;
+    const f = c.mode.foe * c.mode.bossCalm;
     const club = this.club;
     const sway = Math.sin(c.t * 4) * 0.01;
     this.setScaleXY(1 + sway, 1 - sway);
@@ -410,7 +410,7 @@ export class Boss implements Hazard, Target {
       }
     } else if (this.state === 'smash' && this.timer <= 0) {
       this.state = 'rest';
-      this.timer = 2.2 / f;
+      this.timer = 2.2 / Math.max(f, 0.6);
     }
   }
 }
